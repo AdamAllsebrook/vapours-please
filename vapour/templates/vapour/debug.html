@@ -1,0 +1,33 @@
+{% extends 'vapour/base.html' %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+{% endblock %}
+{% block content %}
+    <form method="post" action="{% url 'create_accounts' %}" id="debug-make-form" data-submit-url="{% url 'create_accounts' %}">
+        {% csrf_token %}
+        <input type="number" id="quantity" name="quantity">
+        <button type="submit">Create accounts</button>
+    </form>
+
+    <form method="post" action="{% url 'get_all_accounts' %}" id="debug-get-all-form" data-submit-url="{% url 'get_all_accounts' %}">
+        {% csrf_token %}
+        <button type="submit">Get accounts</button>
+    </form>
+
+    <form method="post" action="{% url 'get_account_by_id' %}" id="debug-get-id-form" data-submit-url="{% url 'get_account_by_id' %}">
+        {% csrf_token %}
+        <input type="number" id="account_id" name="account_id">
+        <button type="submit">Get Account</button>
+    </form>
+
+    <div class="card card-body">
+        <p id="results-dump"></p>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script type="application/javascript" src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'js/ajax_calls.js' %}"></script>
+{% endblock %}
