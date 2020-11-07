@@ -67,7 +67,7 @@ class Document {
         if (this.dragging) {
             const newPosition = this.data.getLocalPosition(self.container.parent);
             self.container.x =  Math.min(Math.max(newPosition.x - this.anchor.x, 0), W-SPLIT-self.container.width);
-            self.container.y =  Math.min(Math.max(newPosition.y - this.anchor.y, 0), H-self.container.height);
+            self.container.y =  Math.min(Math.max(newPosition.y - this.anchor.y, TOP), H-self.container.height);
         }
     }
 
@@ -82,7 +82,7 @@ class Document {
             this.container.x = W / 2 + 100;
             this.velX = -110 + (Math.random() - .5) * 40;
         }
-        this.container.y = Math.random() * (H - this.container.height);
+        this.container.y = 100 + Math.random() * (H - this.container.height - 100);
         this.velY = (Math.random() - .5) * 40
 
         app.ticker.add((delta) => {
@@ -102,7 +102,7 @@ class Document {
                 if (this.velY > 0 && this.container.y > H-this.container.height) {
                     this.velY *= -.8;
                 }
-                else if (this.velY < 0 && this.container.y < 0) {
+                else if (this.velY < 0 && this.container.y < TOP) {
                     this.velY *= -.8;
                 }
 
