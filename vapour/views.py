@@ -20,6 +20,7 @@ def debug(request):
 
 # Creates a given number of accounts, based on the quantity given in the POST params
 def create_accounts(request):
+    # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
         raise Http404
     try:
@@ -28,6 +29,7 @@ def create_accounts(request):
         # Return bad request if the quantity is not an integer
         return JsonResponse({"Error": "Quantity must be an integer"}, status=400)
 
+    # Check quantity is within the range the API accepts
     if quantity in range(1, 26):
         headers = {'Authorization': 'Bearer ' + os.environ['CAP_ONE_KEY'], "Content-Type": "application/json",
                    "version": "1.0"}
@@ -41,6 +43,7 @@ def create_accounts(request):
 
 # Gets all accounts associated with our API key
 def get_all_accounts(request):
+    # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
         raise Http404
     headers = {'Authorization': 'Bearer ' + os.environ['CAP_ONE_KEY'], "version": "1.0"}
@@ -51,10 +54,9 @@ def get_all_accounts(request):
 
 # Gets the account with the given account id
 def get_account_by_id(request):
-    # Check
+    # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
         raise Http404
-    print(request.POST)
     try:
         # Check account id is an int
         int(request.POST['account_id'])
@@ -64,6 +66,70 @@ def get_account_by_id(request):
         return JsonResponse({"Error": "Account ID must be an integer"}, status=400)
 
     headers = {'Authorization': 'Bearer ' + os.environ['CAP_ONE_KEY'], "version": "1.0"}
-    print(constants.GET_ACCOUNTS_URL + "/" + str(account_id))
     r = requests.get(constants.GET_ACCOUNTS_URL + "/" + str(account_id), headers=headers)
+    return JsonResponse({'data': r.text}, status=200)
+
+
+# Creates between 1 and 25 transactions for a given user, specified by their account id
+def create_transactions(request):
+    # Check request is ajax and a post request
+    if not (request.is_ajax() and request.method == "POST"):
+        raise Http404
+    # Check quantity and account id are both integers
+    try:
+        quantity = int(request.POST['quantity'])
+        # Don't store the int version of account id, as int casting removes any 0s at the front, causing 404 on lookup
+        int(request.POST['account_id'])
+        account_id = request.POST['account_id']
+    except ValueError:
+        return JsonResponse({'error': "Account Id and quantity must be integers"}, status=400)
+
+    # Check quantity is within limit allowed by API
+    if quantity in range(1, 26):
+        headers = {'Authorization': 'Bearer ' + os.environ['CAP_ONE_KEY'], "Content-Type": "application/json",
+                   "version": "1.0"}
+        payload = {"quantity": quantity}
+        req_url = constants.BASE_TRANSACTIONS_URL + account_id + "/create"
+        r = requests.post(req_url, headers=headers, data=json.dumps(payload))
+        return JsonResponse({'data': r.text}, status=200)
+    else:
+        return JsonResponse({"Error": "Quantity must be within 1-25"}, status=400)
+
+
+# Gets all transactions for a given account
+# Creates between 1 and 25 transactions for a given user, specified by their account id
+def get_all_transactions(request):
+    # Check request is ajax and a post request
+    if not (request.is_ajax() and request.method == "POST"):
+        raise Http404
+    # Check quantity and account id are both integers
+    try:
+        # Don't store the int version of account id, as int casting removes any 0s at the front, causing 404 on lookup
+        int(request.POST['account_id'])
+        account_id = request.POST['account_id']
+    except ValueError:
+        return JsonResponse({'error': "Account Id must be an integer"}, status=400)
+    req_url = constants.BASE_TRANSACTIONS_URL + account_id + "/transactions"
+    headers = {'Authorization': 'Bearer ' + os.environ['CAP_ONE_KEY'], "version": "1.0"}
+    r = requests.get(req_url, headers=headers)
+    return JsonResponse({'data': r.text}, status=200)
+
+
+# Gets a given transaction for a given account
+# Creates between 1 and 25 transactions for a given user, specified by their account id
+def get_transaction_by_id(request):
+    # Check request is ajax and a post request
+    if not (request.is_ajax() and request.method == "POST"):
+        raise Http404
+        # Check quantity and account id are both integers
+    try:
+        # Don't store the int version of account id, as int casting removes any 0s at the front, causing 404 on lookup
+        int(request.POST['account_id'])
+        account_id = request.POST['account_id']
+        transaction_id = request.POST['transaction_id']
+    except ValueError:
+        return JsonResponse({'error': "Account Id must be an integer"}, status=400)
+    req_url = constants.BASE_TRANSACTIONS_URL + account_id + "/transactions/" + transaction_id
+    headers = {'Authorization': 'Bearer ' + os.environ['CAP_ONE_KEY'], "version": "1.0"}
+    r = requests.get(req_url, headers=headers)
     return JsonResponse({'data': r.text}, status=200)
