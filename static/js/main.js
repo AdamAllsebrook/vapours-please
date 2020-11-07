@@ -9,9 +9,36 @@ document.body.appendChild(app.view);
  //   .add('road', 'static/images/road.png');
 
 function startGame() {
-    let outside = new Outside();
+    
     let inside = new Inside();
-    inside.addDocuments([new Account(0, 'adam allsebrook'), new Transaction()]);
+    let outside = new Outside();
+    let docs = [new Transaction(), new Account(0, 'adam allsebrook')];
+    inside.addDocuments(docs, 'l', outside);
+
 }
 
-startGame();
+function startMenu() {
+    let menu = new PIXI.Container();
+
+    let play = new PIXI.Graphics();
+    play.beginFill(0x333333);
+    play.drawRect(0, 0, 300, 100);
+    play.endFill();
+    play.x = 250;
+    play.y = 200;
+    play.interactive = true;
+    menu.addChild(play);
+
+    playText = new PIXI.Text('Play');
+    playText.x = 120;
+    playText.y = 30;
+    play.addChild(playText);
+    play.on('mousedown', function() {
+        app.stage.removeChild(menu);
+        startGame();
+    })
+
+    app.stage.addChild(menu);
+}
+
+startMenu();
