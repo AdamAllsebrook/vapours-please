@@ -19,7 +19,7 @@ class FlyingDocument {
         let [w, h] = [40, 40]
         this.sprite.width = w;
         this.sprite.height = h;
-        this.sprite.y = H*2/3;
+        this.sprite.y = H*2/3 + 50;
 
         if (side == 'l') {
             this.velX = 20;
