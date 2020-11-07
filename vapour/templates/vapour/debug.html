@@ -4,25 +4,90 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
 {% endblock %}
 {% block content %}
-    <form method="post" action="{% url 'create_accounts' %}" id="debug-make-form" data-submit-url="{% url 'create_accounts' %}">
-        {% csrf_token %}
-        <input type="number" id="quantity" name="quantity">
-        <button type="submit">Create accounts</button>
-    </form>
+    <div class="card">
+        <div class="card-header">Create Accounts</div>
+        <div class="card-body">
+            <form class="debug-form" method="post" action="{% url 'create_accounts' %}" id="debug-make-form" data-submit-url="{% url 'create_accounts' %}">
+                {% csrf_token %}
+                <label for="quantity">Quantity to create:</label>
+                <input type="number" id="quantity" name="quantity">
+                <br>
+                <button type="submit">Create accounts</button>
+            </form>
+        </div>
+    </div>
 
-    <form method="post" action="{% url 'get_all_accounts' %}" id="debug-get-all-form" data-submit-url="{% url 'get_all_accounts' %}">
-        {% csrf_token %}
-        <button type="submit">Get accounts</button>
-    </form>
+    <div class="card">
+        <div class="card-header">Get all Accounts</div>
+        <div class="card-body">
+            <form class="debug-form" method="post" action="{% url 'get_all_accounts' %}" id="debug-get-all-form" data-submit-url="{% url 'get_all_accounts' %}">
+                {% csrf_token %}
+                <button type="submit">Get accounts</button>
+            </form>
+        </div>
+    </div>
 
-    <form method="post" action="{% url 'get_account_by_id' %}" id="debug-get-id-form" data-submit-url="{% url 'get_account_by_id' %}">
-        {% csrf_token %}
-        <input type="number" id="account_id" name="account_id">
-        <button type="submit">Get Account</button>
-    </form>
+    <div class="card">
+        <div class="card-header">Get all Accounts</div>
+        <div class="card-body">
+            <form class="debug-form" method="post" action="{% url 'get_account_by_id' %}" id="debug-get-id-form" data-submit-url="{% url 'get_account_by_id' %}">
+                {% csrf_token %}
+                <input type="number" id="account_id" name="account_id">
+                <button type="submit">Get Account</button>
+            </form>
+        </div>
+    </div>
 
-    <div class="card card-body">
-        <p id="results-dump"></p>
+    <div class="card">
+        <div class="card-header">Create Transactions</div>
+        <div class="card-body">
+            <form class="debug-form" method="post" action="{% url 'create_transactions' %}" id="debug-trans-make-form" data-submit-url="{% url 'create_transactions' %}">
+                {% csrf_token %}
+                <label for="account_id">Account ID:</label>
+                <input type="number" id="account_id" name="account_id">
+                <br>
+                <label for="quantity">Quantity to create:</label>
+                <input type="number" id="quantity" name="quantity">
+                <br>
+                <button type="submit">Create transactions</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Get All Transactions For Account</div>
+        <div class="card-body">
+            <form class="debug-form" method="post" action="{% url 'get_all_transactions' %}" data-submit-url="{% url 'get_all_transactions' %}">
+                {% csrf_token %}
+                <label for="account_id">Account ID:</label>
+                <input type="number" id="account_id" name="account_id">
+                <br>
+                <button type="submit">Get transactions</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Get Transaction By ID</div>
+        <div class="card-body">
+            <form class="debug-form" method="post" action="{% url 'get_transactions_by_id' %}" data-submit-url="{% url 'get_transactions_by_id' %}">
+                {% csrf_token %}
+                <label for="account_id">Account ID:</label>
+                <input type="number" id="account_id" name="account_id">
+                <br>
+                <label for="transaction_id">Transaction ID:</label>
+                <input id="transaction_id" name="transaction_id">
+                <br>
+                <button type="submit">Get transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Results Dump</div>
+        <div class="card-body">
+            <p id="results-dump"></p>
+        </div>
     </div>
 
 {% endblock %}
