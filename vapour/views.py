@@ -3,6 +3,9 @@ from django.shortcuts import render
 import requests
 import os
 import json
+
+from django.views.decorators.csrf import csrf_exempt
+
 from . import constants
 
 
@@ -19,6 +22,7 @@ def debug(request):
 
 
 # Creates a given number of accounts, based on the quantity given in the POST params
+@csrf_exempt
 def create_accounts(request):
     # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
@@ -42,6 +46,7 @@ def create_accounts(request):
 
 
 # Gets all accounts associated with our API key
+@csrf_exempt
 def get_all_accounts(request):
     # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
@@ -53,6 +58,7 @@ def get_all_accounts(request):
 
 
 # Gets the account with the given account id
+@csrf_exempt
 def get_account_by_id(request):
     # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
@@ -71,6 +77,7 @@ def get_account_by_id(request):
 
 
 # Creates between 1 and 25 transactions for a given user, specified by their account id
+@csrf_exempt
 def create_transactions(request):
     # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
@@ -98,6 +105,7 @@ def create_transactions(request):
 
 # Gets all transactions for a given account
 # Creates between 1 and 25 transactions for a given user, specified by their account id
+@csrf_exempt
 def get_all_transactions(request):
     # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
@@ -117,6 +125,7 @@ def get_all_transactions(request):
 
 # Gets a given transaction for a given account
 # Creates between 1 and 25 transactions for a given user, specified by their account id
+@csrf_exempt
 def get_transaction_by_id(request):
     # Check request is ajax and a post request
     if not (request.is_ajax() and request.method == "POST"):
