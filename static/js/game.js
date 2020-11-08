@@ -6,7 +6,7 @@ class Game {
 
         this.conditions = [];
         this.timer = 0;
-        this.stopsCount = 0;
+        this.stopsCount = 8;
         let docs = [new Transaction(1654054351, '$454.34', 'Merchant name'), new Account(435623786, 'adam allsebrook', '$484.23'), new CreditScore(500)];
         this.inside.addDocuments(docs, 'l', this.outside);
         app.ticker.add((delta) => {
@@ -29,6 +29,9 @@ class Game {
         else if (this.stopsCount == 2) {
             this.conditions.push({type: 'credit score', lessThan: 500, desc: 'Reject any account with a credit score below 500.'});
         }
+        else if (this.stopCounts == 3) {
+            this.conditions.push({type: 'id mismatch', desc: 'Reject any account that has a transaction with a different account id'})
+        }
         this.timer = 0;
     }
 
@@ -46,7 +49,7 @@ class Game {
         console.log(account);
 
         let transactions = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < Math.min(Math.max(this.stopsCount - 2, 0), 3); i++) {
             transactions.push(new APITransaction(parseInt(account.account_id), null));
         }
 
@@ -56,9 +59,17 @@ class Game {
 
         console.log(transactions);
 
+        let currency = choose(['$', '£', '€'])
+
         let docs = [
-            new Account(account.account_id, account.customer_name, account.balance)
+            new Account(account.account_id, account.customer_name, currency + account.balance)
         ]
+        if (this.stopsCount >= 2) {
+            docs.push(new CreditScore(account.credit_score));
+        }
+        for (let t of transactions) {
+            docs.push(new Transaction(account.account_id, currency + t.amount, t.merchant_name));
+        }
 
         this.inside.addDocuments(docs, choose(['l', 'r']), this.outside);
 
