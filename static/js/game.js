@@ -2,6 +2,7 @@ class Game {
     constructor() {
         this.inside = new Inside();
         this.outside = new Outside();
+        this.screen = new Screen(this);
 
         this.conditions = [];
         this.timer = 0;
@@ -14,6 +15,10 @@ class Game {
                 this.makeStop();
             }
         });
+
+        this.scoreAtLastStop = 0;
+        this.score = 0;
+        this.shouldAccept = false;
     }
 
     makeStop() {
@@ -31,5 +36,17 @@ class Game {
         let account = new APIAccount(accountNumber)//.then((value) => {
             //console.log(value);
         //})
+    }
+
+    removeDocuments() {
+        this.inside.removeAllDocuments();
+    }
+
+    nextDocuments(accept) {
+        if (accept == shouldAccept) {
+            this.score += 1
+        }
+        this.removeDocuments();
+        this.sendDocuments();
     }
 }

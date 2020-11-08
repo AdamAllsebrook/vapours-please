@@ -41,3 +41,33 @@ class Inside {
         this.documents = [];
     }
 }
+
+class Screen {
+    constructor(game) {
+        this.container = new PIXI.Container();
+        this.container.x = SPLIT + 100;
+        this.container.y = 60
+        app.stage.addChild(this.container);
+
+        this.makeButton('accept', 20, 5, (e) => {
+            game.nextDocuments(true)
+        })
+        this.makeButton('reject', 165, 5, (e) => {
+            game.nextDocuments(true)
+        })
+    }
+    
+    makeButton(text, x, y, f) {
+        let button = new PIXI.Sprite.from('static/images/button.png');
+        button.x = x;
+        button.y = y;
+        button.interactive = true;
+        this.container.addChild(button);
+
+        let buttonText = new PIXI.Text(text);
+        buttonText.x = 15;
+        buttonText.y = 3;
+        button.addChild(buttonText);
+        button.on('mousedown', f)
+    }
+}
