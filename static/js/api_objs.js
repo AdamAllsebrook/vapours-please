@@ -38,7 +38,7 @@ class APIAccount {
     }
 
     // Function which fills in the null attributes via an AJAX call to the Capital One API
-    get_info_from_api = function (obj) {
+    get_info_from_api = async function (obj) {
         let url = "/get_account_by_id/";
         let post = "account_id=" + obj.account_id;
         $.ajax({
