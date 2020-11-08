@@ -117,12 +117,19 @@ class FuelStop {
         this.container.y = 100;
         app.stage.addChild(this.container);
 
-        let str = ''
-        for (let cond of game.conditions) {
-            str += '- ' + cond.desc + '\n'
+        let str
+        if (game.stopsCount >= 6) {
+            str = 'YOU WIN';
+            this.end = true;
         }
-        if (game.score > 0) {
-            str += 'fuel gained: ' + Math.min((game.score - game.scoreAtLastStop) * 10, 100)
+        else {
+            str = ''
+            for (let cond of game.conditions) {
+                str += '- ' + cond.desc + '\n'
+            }
+            if (game.score > 0) {
+                str += 'fuel gained: ' + Math.min((game.score - game.scoreAtLastStop) * 10, 100)
+            }
         }
         let text = new PIXI.Text(str, {fontSize: 20})
         text.x = 100;
@@ -136,6 +143,9 @@ class FuelStop {
         await sleep(5000);
         app.stage.removeChild(this.container);
         this.done = true
+        if (this.end) {
+            location.reload();
+        }
     }
 }
 
