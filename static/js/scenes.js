@@ -129,7 +129,7 @@ class FuelStop {
             str += 'fuel gained: ' + Math.min((game.score - game.scoreAtLastStop) * 10, 100)
         }
         let text = new PIXI.Text(str, {fontSize: 20})
-        text.x = 180;
+        text.x = 100;
         text.y = 200;
         this.container.addChild(text);
         this.done = false
