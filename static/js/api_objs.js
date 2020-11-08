@@ -45,6 +45,7 @@ class APIAccount {
     }
 
     // Function which fills in the null attributes via an AJAX call to the Capital One API
+
     get_info_from_api = function (obj) {
         // Different URL and data depending on if creating or retrieving object
         let url = obj.create ? "/create_account/" : "/get_account_by_id/";

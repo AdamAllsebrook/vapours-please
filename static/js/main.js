@@ -5,16 +5,8 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-//app.loader
- //   .add('road', 'static/images/road.png');
-
 function startGame() {
-    
-    let inside = new Inside();
-    let outside = new Outside();
-    let docs = [new Transaction(1654054351, '$454.34', 'Merchant name'), new Account(435623786, 'adam allsebrook', '$484.23'), new CreditScore(500)];
-    inside.addDocuments(docs, 'l', outside);
-
+    let game = new Game();
 }
 
 function startMenu() {
@@ -36,7 +28,7 @@ function startMenu() {
     play.on('mousedown', function() {
         app.stage.removeChild(menu);
         startGame();
-    })
+    });
 
     app.stage.addChild(menu);
 }
