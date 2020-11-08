@@ -21,8 +21,6 @@ class Document {
         this.background.x = 0;
         this.background.y = 0;
         this.container.addChild(this.background);
-
-        this.textPos = 0;
         
         let self = this;
         this.background
@@ -40,9 +38,10 @@ class Document {
         con.remove(this.container);
     }
 
-    addText(text, options) {
+    addText(text, options, x, y) {
         let t = new PIXI.Text(text, options)
-        t.y = this.textPos;
+        t.x = x
+        t.y = y;
         this.textPos += 20;
         this.container.addChild(t);
     }
@@ -119,20 +118,63 @@ class Document {
 }
 
 class Account extends Document {
-    constructor(id, name) {
-        super(200, 300)
+    constructor(id, name, balance) {
+        super(240, 160);
 
         // add children
         //let nameText = new PIXI.Text(name, {fontSize: 20});
         //this.container.addChild(nameText);
-        this.addText(name)
-        this.addText(id)
+        let image = new PIXI.Sprite.from('static/images/user.png');
+        image.x = 10;
+        image.y = 80;
+
+        this.container.addChild(image);
+
+        this.addText(name, {}, 5, 5);
+        this.addText('#' + id, {fontSize: 20}, 5, 45);
+
+        this.addText(balance, {}, 100, 95);
     }
 }
 
 class Transaction extends Document {
-    constructor() {
-        super(200, 200);
+    constructor(accountId, amount, merchantName) {
+        super(160, 240);
+        this.addText('TRANSACTION:', {fontSize: 16}, 20, 5);
+
+        this.addText('#' + accountId, {fontSize: 20}, 5, 40);
+
+        this.addText('TRANSFERRED', {fontSize: 16}, 18, 80);
+
+        this.addText(amount, {}, 30, 120);
+
+        this.addText('TO', {fontSize: 16}, 65, 165);
+        this.addText(merchantName, {fontSize: 20}, 10, 200)
+
+    }
+}
+
+class CreditScore extends Document {
+    constructor(creditScore) {
+        super(140, 140);
+        this.addText('CREDIT SCORE:', {fontSize: 16}, 8, 5);
+
+        let image = PIXI.Sprite.from('static/images/creditscore.png');
+        image.x = 0;
+        image.y = 30;
+        this.container.addChild(image);
+
+        let stick = PIXI.Sprite.from('static/images/credit_score_stick.png');
+        stick.x = 70;
+        stick.y = 100;
+        stick.pivot.x = 45;
+        //stick.anchor.x = 45;
+        stick.pivot.y = 45;
+       // stick.anchor.y = 45;
+        stick.rotation = creditScore / 1000 * 3.1415 - 3.1415/2;
+        this.container.addChild(stick);
+
+        this.addText(creditScore, {fontSize: 16}, 55, 115);
     }
 }
 

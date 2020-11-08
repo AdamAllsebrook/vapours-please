@@ -1,10 +1,7 @@
 class Car {
     constructor() {
-        this.sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
-        let [w, h] = [80, 128]
-        this.sprite.width = w;
-        this.sprite.height = h;
-        this.sprite.x = SPLIT/2-w/2;
+        this.sprite = PIXI.Sprite.from('static/images/car.png');
+        this.sprite.x = SPLIT/2-47;
         this.sprite.y = H*2/3;
     }
 
@@ -15,18 +12,15 @@ class Car {
 
 class FlyingDocument {
     constructor(side) {
-        this.sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
-        let [w, h] = [40, 40]
-        this.sprite.width = w;
-        this.sprite.height = h;
+        this.sprite = PIXI.Sprite.from('static/images/smolpaper.png');
         this.sprite.y = H*2/3 + 50;
 
         if (side == 'l') {
-            this.velX = 20;
+            this.velX = 12;
             this.sprite.x = -10;
         } 
         else {
-            this.velX = -20;
+            this.velX = -12;
             this.sprite.x = W/2;
         }
         this.velY = -1
