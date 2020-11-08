@@ -37,8 +37,9 @@ class Game {
     }
 
     async makeStop() {
-        console.log('sdfighsdhfghsdkhsduighfduighfdsgyihsfdguifdhguihuiegyfy')
+        this.timer = 0;
         this.onFuelStop = true;
+        console.log('aaa', this.stopsCount);
         this.stopsCount += 1;
         if (this.stopsCount == 1) {
             this.conditions.push({type: 'balance', lessThan: 0, desc: 'Reject any account with a negative balance.', f: (acc, ts) => {
@@ -47,7 +48,7 @@ class Game {
         }
         else if (this.stopsCount == 2) {
             this.conditions.push({type: 'credit score', lessThan: 500, desc: 'Reject any account with a credit score below 500.', f: (acc, ts) => {
-                acc.credit_score = Math.random() * 499;
+                acc.credit_score = Math.round(Math.random() * 499);
             }});
         }
         else if (this.stopCounts == 3) {
@@ -82,7 +83,6 @@ class Game {
         }
 
         this.fuel = Math.min((this.fuel + this.score - this.scoreAtLastStop) * 10, 100)
-        this.timer = 0;
         this.scoreAtLastStop = this.score;
         this.onFuelStop = false
     }
@@ -140,9 +140,7 @@ class Game {
     }
 
     async nextDocuments(accept) {
-        while (this.onFuelStop) {
-            await sleep(50);
-        }
+
         if (accept == this.shouldAccept) {
             this.score += 1
         }
