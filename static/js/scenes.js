@@ -54,7 +54,7 @@ class Screen {
         this.makeButton('accept', 20, 5, (e) => {
             game.nextDocuments(true)
         })
-        this.makeButton(' reject', 165, 5, (e) => {
+        this.makeButton('reject', 165, 5, (e) => {
             game.nextDocuments(true)
         })
 
@@ -80,16 +80,12 @@ class Screen {
     }
     
     makeButton(text, x, y, f) {
-        let button = new PIXI.Sprite.from('static/images/button.png');
+        let button = new PIXI.Sprite.from('static/images/' + text + '.png');
         button.x = x;
         button.y = y;
         button.interactive = true;
         this.container.addChild(button);
 
-        let buttonText = new PIXI.Text(text, {fontSize: 24});
-        buttonText.x = 20;
-        buttonText.y = 5;
-        button.addChild(buttonText);
         button.on('mousedown', f)
     }
 
