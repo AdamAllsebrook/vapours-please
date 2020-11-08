@@ -54,7 +54,7 @@ class Screen {
         this.makeButton('accept', 20, 5, (e) => {
             game.nextDocuments(true)
         })
-        this.makeButton(' reject', 165, 5, (e) => {
+        this.makeButton('reject', 165, 5, (e) => {
             game.nextDocuments(true)
         })
 
@@ -67,19 +67,25 @@ class Screen {
         app.ticker.add((delta) => {
             this.makeScoreNum();
         })
+        
+        this.scoreText = new PIXI.Text('fuel: ', {fontSize: 20});
+        this.scoreText.x = 20;
+        this.scoreText.y = 35;
+        this.container.addChild(this.scoreText);
+
+        this.makeScoreNum();
+        app.ticker.add((delta) => {
+            this.makeFuelNum();
+        })
     }
     
     makeButton(text, x, y, f) {
-        let button = new PIXI.Sprite.from('static/images/button.png');
+        let button = new PIXI.Sprite.from('static/images/' + text + '.png');
         button.x = x;
         button.y = y;
         button.interactive = true;
         this.container.addChild(button);
 
-        let buttonText = new PIXI.Text(text, {fontSize: 24});
-        buttonText.x = 20;
-        buttonText.y = 5;
-        button.addChild(buttonText);
         button.on('mousedown', f)
     }
 
@@ -92,4 +98,48 @@ class Screen {
         this.scoreNum.y = 35;
         this.container.addChild(this.scoreNum);
     }
+
+    makeFuelNum() {
+        if (this.fuelNum) {
+            this.container.removeChild(this.fuelNum);
+        }
+        this.fuelNum = new PIXI.Text(Math.round(this.game.fuel), {fontSize: 20});
+        this.fuelNum.x = 60;
+        this.fuelNum.y = 35;
+        this.container.addChild(this.fuelNum);
+    }
 }
+
+class FuelStop {
+    constructor(game) {
+        this.container = new PIXI.Sprite.from('static/images/info.png');
+        this.container.x = 100;
+        this.container.y = 100;
+        app.stage.addChild(this.container);
+
+        let str = ''
+        for (let cond of game.conditions) {
+            str += '- ' + cond.desc + '\n'
+        }
+        if (game.score > 0) {
+            str += 'fuel gained: ' + Math.min((game.score - game.scoreAtLastStop) * 10, 100)
+        }
+        let text = new PIXI.Text(str, {fontSize: 20})
+        text.x = 100;
+        text.y = 200;
+        this.container.addChild(text);
+        this.done = false
+        
+    }
+
+    async wait() {
+        await sleep(5000);
+        app.stage.removeChild(this.container);
+        this.done = true
+    }
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
