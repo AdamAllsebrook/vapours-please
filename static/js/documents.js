@@ -35,7 +35,7 @@ class Document {
     }
 
     removeFrom(con) {
-        con.remove(this.container);
+        con.removeChild(this.container);
     }
 
     addText(text, options, x, y) {

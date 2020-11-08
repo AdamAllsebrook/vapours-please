@@ -35,8 +35,8 @@ class Inside {
     }
 
     removeAllDocuments() {
-        for (let doc of docs) {
-            doc.remove(this.container);
+        for (let doc of this.documents) {
+            doc.removeFrom(this.container);
         }
         this.documents = [];
     }
@@ -44,6 +44,8 @@ class Inside {
 
 class Screen {
     constructor(game) {
+        this.game = game; 
+
         this.container = new PIXI.Container();
         this.container.x = SPLIT + 100;
         this.container.y = 60
@@ -52,8 +54,18 @@ class Screen {
         this.makeButton('accept', 20, 5, (e) => {
             game.nextDocuments(true)
         })
-        this.makeButton('reject', 165, 5, (e) => {
+        this.makeButton(' reject', 165, 5, (e) => {
             game.nextDocuments(true)
+        })
+
+        this.scoreText = new PIXI.Text('score: ', {fontSize: 20});
+        this.scoreText.x = 180;
+        this.scoreText.y = 35;
+        this.container.addChild(this.scoreText);
+
+        this.makeScoreNum();
+        app.ticker.add((delta) => {
+            this.makeScoreNum();
         })
     }
     
@@ -64,10 +76,20 @@ class Screen {
         button.interactive = true;
         this.container.addChild(button);
 
-        let buttonText = new PIXI.Text(text);
-        buttonText.x = 15;
-        buttonText.y = 3;
+        let buttonText = new PIXI.Text(text, {fontSize: 24});
+        buttonText.x = 20;
+        buttonText.y = 5;
         button.addChild(buttonText);
         button.on('mousedown', f)
+    }
+
+    makeScoreNum() {
+        if (this.scoreNum) {
+            this.container.removeChild(this.scoreNum);
+        }
+        this.scoreNum = new PIXI.Text(this.game.score, {fontSize: 20});
+        this.scoreNum.x = 240;
+        this.scoreNum.y = 35;
+        this.container.addChild(this.scoreNum);
     }
 }

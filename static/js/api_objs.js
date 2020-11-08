@@ -9,10 +9,10 @@ class APIAccount {
         this.credit_score = null;
         this.risk_score = null;
         this.currency = null;
+        this.state = null;
         // Loaded will equal true once the API call is done
         this.loaded = false;
         this.get_info_from_api(this);
-
     }
 
     // All the setters for the different attributes
@@ -40,6 +40,10 @@ class APIAccount {
         this.currency = new_curr;
     }
 
+    set state_set(new_state) {
+        this.state = new_state;
+    }
+
     set loaded_status(new_loaded) {
         this.loaded = new_loaded
     }
@@ -63,10 +67,9 @@ class APIAccount {
                 obj.currency_set = account_info['currencyCode'];
                 obj.risk_score_set = account_info['riskScore'];
                 obj.balance_set = account_info['balance'];
+                obj.state_set = account_info['state']
                 // Sets loaded to true now all attributes are set
                 obj.loaded_status = true;
-
-                console.log("Wahey!");
             }
         });
     }
@@ -119,6 +122,7 @@ class APITransaction {
             dataType: 'json',
             method: 'POST',
             success: function(data) {
+                //console.log(data['data']);
                 // Get the correct JSON data out of the response depending on if creating or recieving data
                 let transaction_info = null;
                 if(obj.create){
