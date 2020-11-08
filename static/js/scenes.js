@@ -116,12 +116,9 @@ class Screen {
 
 class FuelStop {
     constructor(game) {
-        this.container = new PIXI.Graphics();
-        this.container.beginFill(0xC227B9);
-        this.container.drawRect(100, 100, 600, 400);
-        this.container.endFill();
-        this.container.x = 0;
-        this.container.y = 0;
+        this.container = new PIXI.Sprite.from('static/images/info.png');
+        this.container.x = 100;
+        this.container.y = 100;
         app.stage.addChild(this.container);
 
         let str = ''

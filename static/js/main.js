@@ -12,9 +12,12 @@ function startGame() {
 function startMenu() {
     let menu = new PIXI.Container();
 
+    let back = new PIXI.Sprite.from('static/images/start.png')
+    menu.addChild(back);
+
     let play = new PIXI.Graphics();
     play.beginFill(0x333333);
-    play.drawRect(0, 0, 300, 100);
+    play.drawRect(0, 0, 161, 325);
     play.endFill();
     play.x = 250;
     play.y = 200;
