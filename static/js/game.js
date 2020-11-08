@@ -32,21 +32,56 @@ class Game {
         this.timer = 0;
     }
 
-    sendDocuments(accountNumber) {
-        let account = new APIAccount(accountNumber)//.then((value) => {
-            //console.log(value);
-        //})
+    async sendDocuments(accountNumber) {
+
+        let account = {state: null}
+        while (!(account.state == 'open')) {
+            account = new APIAccount(null);
+
+            while (!account.loaded) {
+                await sleep(50);
+            }
+        }
+
+        console.log(account);
+
+        let transactions = [];
+        for (let i = 0; i < 3; i++) {
+            transactions.push(new APITransaction(parseInt(account.account_id), null));
+        }
+
+        while (transactions.filter((t) => t.loaded).length < transactions.length) {
+            await sleep(50);
+        }
+
+        console.log(transactions);
+
+        let docs = [
+            new Account(account.account_id, account.customer_name, account.balance)
+        ]
+
+        this.inside.addDocuments(docs, choose(['l', 'r']), this.outside);
+
     }
 
     removeDocuments() {
         this.inside.removeAllDocuments();
     }
 
-    nextDocuments(accept) {
-        if (accept == shouldAccept) {
+    async nextDocuments(accept) {
+        if (accept == this.shouldAccept) {
             this.score += 1
         }
         this.removeDocuments();
-        this.sendDocuments();
+        await this.sendDocuments();
     }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+function choose(choices) {
+    var index = Math.floor(Math.random() * choices.length);
+    return choices[index];
 }
