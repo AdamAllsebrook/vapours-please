@@ -67,6 +67,16 @@ class Screen {
         app.ticker.add((delta) => {
             this.makeScoreNum();
         })
+        
+        this.scoreText = new PIXI.Text('fuel: ', {fontSize: 20});
+        this.scoreText.x = 20;
+        this.scoreText.y = 35;
+        this.container.addChild(this.scoreText);
+
+        this.makeScoreNum();
+        app.ticker.add((delta) => {
+            this.makeFuelNum();
+        })
     }
     
     makeButton(text, x, y, f) {
@@ -92,4 +102,51 @@ class Screen {
         this.scoreNum.y = 35;
         this.container.addChild(this.scoreNum);
     }
+
+    makeFuelNum() {
+        if (this.fuelNum) {
+            this.container.removeChild(this.fuelNum);
+        }
+        this.fuelNum = new PIXI.Text(Math.round(this.game.fuel), {fontSize: 20});
+        this.fuelNum.x = 60;
+        this.fuelNum.y = 35;
+        this.container.addChild(this.fuelNum);
+    }
 }
+
+class FuelStop {
+    constructor(game) {
+        this.container = new PIXI.Graphics();
+        this.container.beginFill(0xC227B9);
+        this.container.drawRect(100, 100, 600, 400);
+        this.container.endFill();
+        this.container.x = 0;
+        this.container.y = 0;
+        app.stage.addChild(this.container);
+
+        let str = ''
+        for (let cond of game.conditions) {
+            str += '- ' + cond.desc + '\n'
+        }
+        if (game.score > 0) {
+            str += 'fuel gained: ' + Math.min((game.score - game.scoreAtLastStop) * 10, 100)
+        }
+        let text = new PIXI.Text(str, {fontSize: 20})
+        text.x = 180;
+        text.y = 200;
+        this.container.addChild(text);
+        this.done = false
+        
+    }
+
+    async wait() {
+        await sleep(5000);
+        app.stage.removeChild(this.container);
+        this.done = true
+    }
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }

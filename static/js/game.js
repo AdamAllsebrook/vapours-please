@@ -1,3 +1,9 @@
+
+function choose(choices) {
+    var index = Math.floor(Math.random() * choices.length);
+    return choices[index];
+}
+
 class Game {
     constructor() {
         this.inside = new Inside();
@@ -6,33 +12,79 @@ class Game {
 
         this.conditions = [];
         this.timer = 0;
-        this.stopsCount = 8;
-        let docs = [new Transaction(1654054351, '$454.34', 'Merchant name'), new Account(435623786, 'adam allsebrook', '$484.23'), new CreditScore(500)];
-        this.inside.addDocuments(docs, 'l', this.outside);
+        this.stopsCount = 0;
+        this.fuel = 100
+        this.scoreAtLastStop = 0;
+        this.score = 0;
+        
+        this.makeStop();
+        this.nextDocuments();
+
         app.ticker.add((delta) => {
             this.timer += delta / 60;
-            if (this.timer > 30) {
+            if (this.timer > 35) {
                 this.makeStop();
+            }
+            this.fuel -= delta / 60
+            if (this.fuel < 0) {
+                // lose
             }
         });
 
-        this.scoreAtLastStop = 0;
-        this.score = 0;
         this.shouldAccept = false;
+
+        this.onFuelStop = false;
     }
 
-    makeStop() {
+    async makeStop() {
+        console.log('sdfighsdhfghsdkhsduighfduighfdsgyihsfdguifdhguihuiegyfy')
+        this.onFuelStop = true;
         this.stopsCount += 1;
         if (this.stopsCount == 1) {
-            this.conditions.push({type: 'balance', lessThan: 0, desc: 'Reject any account with a negative balance.'});
+            this.conditions.push({type: 'balance', lessThan: 0, desc: 'Reject any account with a negative balance.', f: (acc, ts) => {
+                acc.balance = Math.round(-Math.random() * 500 * 100) / 100;
+            }});
         }
         else if (this.stopsCount == 2) {
-            this.conditions.push({type: 'credit score', lessThan: 500, desc: 'Reject any account with a credit score below 500.'});
+            this.conditions.push({type: 'credit score', lessThan: 500, desc: 'Reject any account with a credit score below 500.', f: (acc, ts) => {
+                acc.credit_score = Math.random() * 499;
+            }});
         }
         else if (this.stopCounts == 3) {
-            this.conditions.push({type: 'id mismatch', desc: 'Reject any account that has a transaction with a different account id'})
+            this.conditions.push({type: 'id mismatch', desc: 'Reject any account that has a transaction with a different account id', f: (acc, ts) => {
+                choose(ts).account_id = Math.random() * 99000000 + 1000000;
+            }});
         }
+        else if (this.stopsCount == 4) {
+            this.conditions.push({type: 'bad merchant', desc: 'Reject any account that has made a transaction with the merchant: Merchie', f: (acc, ts) => {
+                choose(ts).merchant_name = 'Merchies';
+            }})
+        }
+        else if (this.stopsCount == 5) {
+            this.conditions.push({type: 'wrong currency', desc: 'Reject any account making purhcases with different currencies', f: (acc, ts) => {
+                let t = choose(ts);
+                if (t.amount[0] == '£') {
+                    t.amount[0] = choose(['$', '€']);
+                }
+                else if (t.amount[0] == '€') {
+                    t.amount[0] = choose(['$', '£']);
+                }
+                if (t.amount[0] == '$') {
+                    t.amount[0] = choose(['$', '€']);
+                }
+            }})
+        }
+
+        let stop = new FuelStop(this);
+        await stop.wait();
+        while (!stop.done) {
+            await sleep(50);
+        }
+
+        this.fuel = Math.min((this.fuel + this.score - this.scoreAtLastStop) * 10, 100)
         this.timer = 0;
+        this.scoreAtLastStop = this.score;
+        this.onFuelStop = false
     }
 
     async sendDocuments(accountNumber) {
@@ -45,9 +97,6 @@ class Game {
                 await sleep(50);
             }
         }
-
-        console.log(account);
-
         let transactions = [];
         for (let i = 0; i < Math.min(Math.max(this.stopsCount - 2, 0), 3); i++) {
             transactions.push(new APITransaction(parseInt(account.account_id), null));
@@ -57,9 +106,20 @@ class Game {
             await sleep(50);
         }
 
-        console.log(transactions);
-
+        this.shouldAccept = choose([true, true, false]);
+        if (this.stopsCount >= 2 && account.credit_score < 500) {
+            this.shouldAccept = false
+        }
+        
         let currency = choose(['$', '£', '€'])
+        for (let t of transactions) {
+            t.amount = currency + t.amount;
+        }
+
+        if (!this.shouldAccept) {
+            let c = choose(this.conditions);
+            c.f(account, transactions);
+        }
 
         let docs = [
             new Account(account.account_id, account.customer_name, currency + account.balance)
@@ -68,7 +128,7 @@ class Game {
             docs.push(new CreditScore(account.credit_score));
         }
         for (let t of transactions) {
-            docs.push(new Transaction(account.account_id, currency + t.amount, t.merchant_name));
+            docs.push(new Transaction(account.account_id, t.amount, t.merchant_name));
         }
 
         this.inside.addDocuments(docs, choose(['l', 'r']), this.outside);
@@ -80,6 +140,9 @@ class Game {
     }
 
     async nextDocuments(accept) {
+        while (this.onFuelStop) {
+            await sleep(50);
+        }
         if (accept == this.shouldAccept) {
             this.score += 1
         }
@@ -91,8 +154,3 @@ class Game {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
-function choose(choices) {
-    var index = Math.floor(Math.random() * choices.length);
-    return choices[index];
-}
