@@ -27,7 +27,7 @@ class Game {
             }
             this.fuel -= delta / 60
             if (this.fuel < 0) {
-                // lose
+                location.reload(); 
             }
         });
 
