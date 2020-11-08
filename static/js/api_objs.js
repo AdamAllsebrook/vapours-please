@@ -2,6 +2,8 @@ class APIAccount {
     // Constructor initialised all variables to null, then asks the API to fill them in
     constructor(acct_id) {
         this.account_id = acct_id;
+        this.create = this.account_id == null;
+        // If loading already existing object, read from API
         this.balance = null;
         this.customer_name = null;
         this.credit_score = null;
@@ -10,9 +12,14 @@ class APIAccount {
         // Loaded will equal true once the API call is done
         this.loaded = false;
         this.get_info_from_api(this);
+
     }
 
     // All the setters for the different attributes
+    set account_id_set(new_id) {
+        this.account_id = new_id;
+    }
+
     set customer_name_set(new_name) {
         this.customer_name = new_name;
     }
@@ -38,9 +45,11 @@ class APIAccount {
     }
 
     // Function which fills in the null attributes via an AJAX call to the Capital One API
-    get_info_from_api = async function (obj) {
-        let url = "/get_account_by_id/";
-        let post = "account_id=" + obj.account_id;
+
+    get_info_from_api = function (obj) {
+        // Different URL and data depending on if creating or retrieving object
+        let url = obj.create ? "/create_account/" : "/get_account_by_id/";
+        let post = obj.create ? "quantity=1" : "account_id=" + obj.account_id;
         $.ajax({
             url: url,
             data: post,
@@ -48,6 +57,7 @@ class APIAccount {
             method: 'POST',
             success: function(data) {
                 let account_info = JSON.parse(data['data'])['Accounts'][0];
+                obj.account_id_set = account_info['accountId'];
                 obj.credit_score_set = account_info['creditScore']
                 obj.customer_name_set = account_info['firstname'] + " " + account_info['lastname'];
                 obj.currency_set = account_info['currencyCode'];
@@ -67,11 +77,20 @@ class APITransaction {
     constructor(acct_id, trans_id) {
         this.account_id = acct_id;
         this.transaction_id = trans_id;
+        this.create = this.transaction_id == null;
         this.amount = null;
         this.merchant_name = null;
         this.merchant_category = null;
         this.loaded = false;
         this.get_info_from_api(this);
+    }
+
+    set account_id_set(new_id){
+        this.account_id = new_id;
+    }
+
+    set transaction_id_set(new_id){
+        this.transaction_id = new_id;
     }
 
     set loaded_set(new_loaded){
@@ -91,17 +110,25 @@ class APITransaction {
     }
 
     get_info_from_api = function(obj){
-        let url = '/get_transaction_by_id/';
-        let post = 'account_id=' + obj.account_id + "&transaction_id=" + obj.transaction_id;
+        let url = obj.create ? '/create_transactions/' : '/get_transaction_by_id/';
+        let post = 'account_id=' + obj.account_id;
+        post = post + (obj.create ? '&quantity=1' : "&transaction_id=" + obj.transaction_id)
         $.ajax({
             url: url,
             data: post,
             dataType: 'json',
             method: 'POST',
             success: function(data) {
-                console.log(data['data']);
-                let transaction_info = JSON.parse(data['data']);
-                obj.amount = transaction_info['amount']
+                // Get the correct JSON data out of the response depending on if creating or recieving data
+                let transaction_info = null;
+                if(obj.create){
+                    transaction_info = JSON.parse(data['data'])["Transactions"][0];
+                }else {
+                    transaction_info = JSON.parse(data['data']);
+                }
+                obj.account_id = transaction_info['accountUUID'];
+                obj.transaction_id = transaction_info['transactionUUID'];
+                obj.amount = transaction_info['amount'];
                 obj.merchant_category_set = transaction_info['merchant']['category'];
                 obj.merchant_name_set = transaction_info['merchant']['name'];
                 // Sets loaded to true now all attributes are set
