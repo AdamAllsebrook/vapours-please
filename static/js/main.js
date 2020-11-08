@@ -12,7 +12,7 @@ function startGame() {
     
     let inside = new Inside();
     let outside = new Outside();
-    let docs = [new Transaction(), new Account(0, 'adam allsebrook')];
+    let docs = [new Transaction(1654054351, '$454.34', 'Merchant name'), new Account(435623786, 'adam allsebrook', '$484.23'), new CreditScore(500)];
     inside.addDocuments(docs, 'l', outside);
 
 }
